@@ -1,0 +1,13 @@
+version: '2'
+services:
+  nfsserver:
+    image: itsthenetwork/nfs-server-alpine:latest
+    container_name: nfsserver
+    privileged: true
+    volumes:
+      - /Data/nfs_data:/nfsshare
+    environment:
+      SHARED_DIRECTORY: "/nfsshare"
+    ports:
+      - "2049:2049"
+    restart: always

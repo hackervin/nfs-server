@@ -1,0 +1,115 @@
+version: '3.3'
+services:
+  kafka:
+    image: wurstmeister/kafka:latest
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://10.210.16.102:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2182
+    ports:
+     - 9094:9094
+    networks:
+     - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+         - node.id == uyszqbmtpofs7930ka3xn3k9j
+  kafka-poc-env-var-linux-poc:
+    image: 10.210.16.204:8084/kafka-poc-env-var-linux-poc:0.1
+    environment:
+      ENV_VAR: 'ON'
+    ports:
+     - 2823:8282
+    networks:
+     - default
+    logging:
+      driver: json-file
+    deploy:
+      update_config:
+        delay: 30s
+      restart_policy:
+        condition: on-failure
+  kafka-ui:
+    image: 10.210.16.204:8084/kafka-manager:latest
+    environment:
+      ZK_HOSTS: 10.210.16.102:2182
+    ports:
+     - 9021:9000
+    networks:
+     - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+         - node.role != manager
+  kafka1:
+    image: wurstmeister/kafka:latest
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://10.210.16.102:9095
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2182
+    ports:
+     - 9095:9095
+    networks:
+     - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+         - node.id == uyszqbmtpofs7930ka3xn3k9j
+  kafka2:
+    image: wurstmeister/kafka:latest
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://10.210.16.102:9096
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9096
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2182
+    ports:
+     - 9096:9096
+    networks:
+     - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+         - node.id == uyszqbmtpofs7930ka3xn3k9j
+  zookeeper:
+    image: 10.210.16.204:8084/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: '2182'
+      ZOOKEEPER_TICK_TIME: '2000'
+    ports:
+     - 2182:2182
+    networks:
+     - default
+    logging:
+      driver: json-file
+    deploy:
+      update_config:
+        delay: 30s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+         - node.id == uyszqbmtpofs7930ka3xn3k9j
+networks:
+  default:
+    driver: overlay
